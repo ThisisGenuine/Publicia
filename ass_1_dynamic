@@ -1,0 +1,67 @@
+from shapely.geometry import LineString
+from matplotlib import pyplot as plt
+
+def plot_line(x, y, color, label):
+    plt.plot(x, y, color=color, label=label)
+
+def plot_intersection(line1, line2):
+    intersection = line1.intersection(line2)
+    plt.plot(*intersection.xy, 'ro')
+    return intersection
+
+def plot_fill_between(x, y, color, alpha):
+    plt.fill_between(x, y, max(y), color=color, alpha=alpha)
+
+def print_basis(lines):
+    basis = []
+    for line in lines:
+        basis.append((line.coords[1], line.coords[0]))
+    basis.sort(key=lambda p: (p[0][0], p[0][1]))
+    print("Basis of the graph:")
+    for point1, point2 in basis:
+        print(f"({point1[0]}, {point1[1]}) -> ({point2[0]}, {point2[1]})")
+
+# User input for points
+x1 = [int(x) for x in input("Enter x-coordinates for line 1 (separated by space): ").split()]
+y1 = [int(y) for y in input("Enter y-coordinates for line 1 (separated by space): ").split()]
+
+x2 = [int(x) for x in input("Enter x-coordinates for line 2 (separated by space): ").split()]
+y2 = [int(y) for y in input("Enter y-coordinates for line 2 (separated by space): ").split()]
+
+x3 = [int(x) for x in input("Enter x-coordinates for line 3 (separated by space): ").split()]
+y3 = [int(y) for y in input("Enter y-coordinates for line 3 (separated by space): ").split()]
+
+# Plotting the lines
+plot_line(x1, y1, color='lime', label='5x + y = 10')
+plot_line(x2, y2, color='magenta', label='2x + 2y = 12')
+plot_line(x3, y3, color='cyan', label='x + 4y = 12')
+
+plt.xlabel('X - Axis')
+plt.ylabel('Y - Axis')
+plt.title('Plotting')
+plt.legend()
+
+# Finding intersections
+line1 = LineString(list(zip(x1, y1)))
+line2 = LineString(list(zip(x2, y2)))
+line3 = LineString(list(zip(x3, y3)))
+
+intersection1 = plot_intersection(line1, line2)
+intersection2 = plot_intersection(line2, line3)
+
+# Filling the region
+x = [0, intersection1.x, intersection2.x, 12]
+y = [10, intersection1.y, intersection2.y, 0]
+plot_fill_between(x, y, color='lime', alpha=0.4)  # Neon green
+
+# Printing points of intersection
+print("Point of Intersection 1:")
+print(intersection1.x, intersection1.y)
+print("Point of Intersection 2:")
+print(intersection2.x, intersection2.y)
+
+# Finding and printing basis
+lines = [line1, line2, line3]
+print_basis(lines)
+
+plt.show()
